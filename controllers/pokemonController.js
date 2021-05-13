@@ -2,13 +2,16 @@ const session = require('express-session');
 const axios = require("axios");
 
 const loadPokedexList = (req, res) => {
-  
+
   const skip = parseInt(req.params.skip);
 
   let requests=[];
   for(let i=1+skip;i<=10+skip;i++)
   {
-    requests.push( axios.get(`https://pokeapi.co/api/v2/pokemon/${i}/`) );
+    if(i<=1118)
+    {
+      requests.push( axios.get(`https://pokeapi.co/api/v2/pokemon/${i}/`) );
+    }
   }
 
   axios.all(requests).then(axios.spread((...responses) => {
@@ -35,10 +38,22 @@ const loadPokedexList = (req, res) => {
     res.json({list});
   })).catch(errors => {
     res.status(502).json({errors});
-  })
+  });
+
+
 
 };
 
+const loadFullPokedex = (req, res) => {
+  axios.get('https://pokeapi.co/api/v2/pokemon?limit=1118').then(response=>{
+
+    res.json({pokedex:response.data.results});
+  }).catch(error => {
+    res.status(502).json({error});
+  });
+};
+
 module.exports={
-  loadPokedexList
+  loadPokedexList,
+  loadFullPokedex
 };
