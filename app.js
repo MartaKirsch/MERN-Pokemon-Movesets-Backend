@@ -54,5 +54,5 @@ app.use('/pokemon', pokemonRoutes);
 
 //404
 app.use((req,res)=>{
-  res.send('An error occured');
+  res.status(404).send('An error occured');
 })

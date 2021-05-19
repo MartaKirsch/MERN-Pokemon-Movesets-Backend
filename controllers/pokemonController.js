@@ -45,7 +45,7 @@ const loadPokedexList = (req, res) => {
 };
 
 const loadFullPokedex = (req, res) => {
-  axios.get('https://pokeapi.co/api/v2/pokemon?limit=1118').then(response=>{
+  axios.get('https://pokeapi.co/api/v2/pokemon-species/?limit=898').then(response=>{
 
     res.json({pokedex:response.data.results});
   }).catch(error => {
@@ -53,7 +53,42 @@ const loadFullPokedex = (req, res) => {
   });
 };
 
+const checkIfExists = (req, res) => {
+  axios.get(`https://pokeapi.co/api/v2/pokemon-species/${req.params.name}`).then(response=>{
+    res.json({exists:true});
+  }).catch(error => {
+    res.status(502).json({exists:false});
+  });
+};
+
+const pokeInfo = (req, res) => {
+  let { name, species } = req.params;
+  name=name.toLowerCase();
+
+  let requests = [axios.get(`https://pokeapi.co/api/v2/pokemon/${name}/`),axios.get(`https://pokeapi.co/api/v2/pokemon-species/${species}/`)];
+
+  axios.all(requests).then(axios.spread((...responses) => {
+
+    const pokemon = responses[0].data;
+    const species = responses[1].data;
+
+    axios.get(species.evolution_chain.url).then(resp=>{
+
+      res.json({pokemon, species, evolution:resp.data});
+
+    }).catch(err => {
+      res.status(502).json({err});
+    });
+
+  })).catch(errors => {
+    res.status(502).json({errors});
+  });
+
+};
+
 module.exports={
   loadPokedexList,
-  loadFullPokedex
+  loadFullPokedex,
+  checkIfExists,
+  pokeInfo
 };
