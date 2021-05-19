@@ -62,27 +62,40 @@ const checkIfExists = (req, res) => {
 };
 
 const pokeInfo = (req, res) => {
-  let { name, species } = req.params;
+  let { name } = req.params;
+  let { species } = req.body;
   name=name.toLowerCase();
+  species=species.toLowerCase();
 
-  let requests = [axios.get(`https://pokeapi.co/api/v2/pokemon/${name}/`),axios.get(`https://pokeapi.co/api/v2/pokemon-species/${species}/`)];
+  axios.get(`https://pokeapi.co/api/v2/pokemon-species/${species}`).then(resp => {
 
-  axios.all(requests).then(axios.spread((...responses) => {
+    const speciesObj = resp.data;
 
-    const pokemon = responses[0].data;
-    const species = responses[1].data;
-
-    axios.get(species.evolution_chain.url).then(resp=>{
-
-      res.json({pokemon, species, evolution:resp.data});
-
-    }).catch(err => {
-      res.status(502).json({err});
+    let index = 0;
+    speciesObj.varieties.forEach((variety,i) => {
+      if(variety.pokemon.name===name)
+        index=i;
     });
 
-  })).catch(errors => {
-    res.status(502).json({errors});
+
+    let requests = [axios.get(speciesObj.varieties[index].pokemon.url),
+    axios.get(speciesObj.evolution_chain.url)];
+
+    axios.all(requests).then(axios.spread((...responses) => {
+
+      const pokemon = responses[0].data;
+      const evolution = responses[1].data;
+
+      res.json({pokemon, species:speciesObj, evolution});
+
+    })).catch(errors => {
+      res.status(502).json({errors});
+    });
+
+  }).catch(err => {
+    res.status(502).json({err});
   });
+
 
 };
 
