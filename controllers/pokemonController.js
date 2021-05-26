@@ -55,9 +55,9 @@ const loadFullPokedex = (req, res) => {
 
 const checkIfExists = (req, res) => {
   axios.get(`https://pokeapi.co/api/v2/pokemon-species/${req.params.name}`).then(response=>{
-    res.json({exists:true});
+    res.json({isOK:true});
   }).catch(error => {
-    res.status(502).json({exists:false});
+    res.status(502).json({isOK:false});
   });
 };
 
