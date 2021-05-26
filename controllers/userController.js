@@ -49,9 +49,33 @@ const register = (req, res) => {
   })
 };
 
+
+const logIn = (req, res) => {
+  let session = req.session;
+
+  const { login, passwd } = req.body;
+
+  User.findOne({
+    $or: [{username_lowercase: login.toLowerCase()}, {email: login}],
+    password:passwd
+    })
+  .then(doc=>{
+    const ok = doc ? true : false;
+
+    if(ok)
+      session.user = login;
+      
+    res.json({loggedIn:ok});
+  })
+  .catch(err=>{
+    res.json({loggedIn:false});
+  });
+};
+
 module.exports = {
   checkIfLoggedIn,
   checkIfExists,
   checkIfEmailExists,
-  register
+  register,
+  logIn
 };
