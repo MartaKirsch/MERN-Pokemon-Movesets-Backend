@@ -64,7 +64,7 @@ const logIn = (req, res) => {
 
     if(ok)
       session.user = login;
-      
+
     res.json({loggedIn:ok});
   })
   .catch(err=>{
@@ -72,10 +72,17 @@ const logIn = (req, res) => {
   });
 };
 
+const logOut = (req, res) => {
+  let sess = req.session;
+  sess.user = null;
+  res.json({mssg:"logged out"});
+};
+
 module.exports = {
   checkIfLoggedIn,
   checkIfExists,
   checkIfEmailExists,
   register,
-  logIn
+  logIn,
+  logOut
 };
