@@ -99,9 +99,49 @@ const pokeInfo = (req, res) => {
 
 };
 
+const allPokemonNames = (req, res) => {
+  axios.get('https://pokeapi.co/api/v2/pokemon/?limit=1118').then(response=>{
+    res.json({list:response.data.results});
+  }).catch(error => {
+    res.status(502).json({error});
+  });
+};
+
+const allHeldItems = (req, res) => {
+  axios.get('https://pokeapi.co/api/v2/item-attribute/7').then(response=>{
+    res.json({list:response.data.items});
+  }).catch(error => {
+    res.status(502).json({error});
+  });
+};
+
+const abilities = (req, res) => {
+  axios.get(`https://pokeapi.co/api/v2/pokemon/${req.params.name}`).then(response=>{
+    let arr = [];
+    response.data.abilities.forEach(item => {
+      arr.push(item.ability);
+    });
+    res.json({list:arr});
+  }).catch(error => {
+    res.status(502).json({error});
+  });
+};
+
+const allNatures = (req, res) => {
+  axios.get('https://pokeapi.co/api/v2/nature/?limit=25').then(response=>{
+    res.json({list:response.data.results});
+  }).catch(error => {
+    res.status(502).json({error});
+  });
+};
+
 module.exports={
   loadPokedexList,
   loadFullPokedex,
   checkIfExists,
-  pokeInfo
+  pokeInfo,
+  allPokemonNames,
+  allHeldItems,
+  abilities,
+  allNatures
 };
