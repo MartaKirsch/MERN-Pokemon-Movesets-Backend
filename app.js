@@ -6,6 +6,7 @@ const session = require('express-session');
 const MongoStore = require('connect-mongo');
 const pokemonRoutes = require('./routes/pokemonRoutes');
 const userRoutes = require('./routes/userRoutes');
+const movesetRoutes = require('./routes/movesetRoutes');
 
 const app = express();
 
@@ -53,6 +54,7 @@ app.use(session({
 //routes
 app.use('/pokemon', pokemonRoutes);
 app.use('/user', userRoutes);
+app.use('/moveset',movesetRoutes);
 
 //404
 app.use((req,res)=>{
