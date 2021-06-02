@@ -135,6 +135,15 @@ const allNatures = (req, res) => {
   });
 };
 
+const allMoves = (req, res) => {
+  axios.get(`https://pokeapi.co/api/v2/pokemon/${req.params.name}`).then(response=>{
+    let list = response.data.moves.map(item=>item.move);
+    res.json({list});
+  }).catch(error => {
+    res.status(502).json({error});
+  });
+};
+
 module.exports={
   loadPokedexList,
   loadFullPokedex,
@@ -143,5 +152,6 @@ module.exports={
   allPokemonNames,
   allHeldItems,
   abilities,
-  allNatures
+  allNatures,
+  allMoves
 };

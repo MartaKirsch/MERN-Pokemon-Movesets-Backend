@@ -10,6 +10,7 @@ router.get('/allPokemonNames', pokemonController.allPokemonNames);
 router.get('/allHeldItems', pokemonController.allHeldItems);
 router.get('/abilities/:name', pokemonController.abilities);
 router.get('/allNatures', pokemonController.allNatures);
+router.get('/allMoves/:name', pokemonController.allMoves);
 
 router.post('/pokeInfo/:name', pokemonController.pokeInfo);
 
