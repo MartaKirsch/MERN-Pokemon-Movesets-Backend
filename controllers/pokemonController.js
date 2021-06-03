@@ -8,9 +8,13 @@ const loadPokedexList = (req, res) => {
   let requests=[];
   for(let i=1+skip;i<=10+skip;i++)
   {
-    if(i<=1118)
+    if(i<=898)
     {
       requests.push( axios.get(`https://pokeapi.co/api/v2/pokemon/${i}/`) );
+    }
+    else if(i<=1118)
+    {
+      requests.push( axios.get(`https://pokeapi.co/api/v2/pokemon/${i+9103}/`) );
     }
   }
 
@@ -47,7 +51,7 @@ const loadPokedexList = (req, res) => {
 const loadFullPokedex = (req, res) => {
   axios.get('https://pokeapi.co/api/v2/pokemon-species/?limit=898').then(response=>{
 
-    res.json({pokedex:response.data.results});
+    res.json({list:response.data.results});
   }).catch(error => {
     res.status(502).json({error});
   });

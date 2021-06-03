@@ -18,6 +18,10 @@ const movesetSchema = new Schema({
     type: String,
     required: true
   },
+  "url": {
+    type: String,
+    required: true
+  },
   "ability": {
     type: String,
     required: true
@@ -43,7 +47,7 @@ const movesetSchema = new Schema({
   "description": {
     type: String
   },
-  "createdAt": {
+  "createdOn": {
     type: Date,
     default: Date.now
   },

@@ -63,7 +63,7 @@ const logIn = (req, res) => {
     const ok = doc ? true : false;
 
     if(ok)
-      session.user = login;
+      session.user = doc.username;
 
     res.json({loggedIn:ok});
   })
