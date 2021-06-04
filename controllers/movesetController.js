@@ -43,11 +43,9 @@ const add = (req, res) => {
     const moveset = new Moveset(data);
     moveset.save().then(doc=>{
       const saved = doc ? true : false;
-      console.log(doc);
       res.json({saved});
     });
   }).catch(err=>{
-    console.log(err);
     res.status(502).json({saved: false});
   });
 
