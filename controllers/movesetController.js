@@ -25,7 +25,7 @@ const add = (req, res) => {
 
 
   axios.get(`https://pokeapi.co/api/v2/pokemon/${pokemon}`).then(resp=>{
-
+    const url = resp.data.sprites.front_default;
     const data = {
       pokemon,
       ability,
@@ -37,15 +37,17 @@ const add = (req, res) => {
       description,
       heldItem,
       author,
-      url:resp.sprites.front_default
+      url
     };
 
     const moveset = new Moveset(data);
     moveset.save().then(doc=>{
       const saved = doc ? true : false;
+      console.log(doc);
       res.json({saved});
     });
   }).catch(err=>{
+    console.log(err);
     res.status(502).json({saved: false});
   });
 
