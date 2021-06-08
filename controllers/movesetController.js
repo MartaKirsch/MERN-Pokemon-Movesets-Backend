@@ -86,10 +86,50 @@ const loadList = (req, res) => {
   })
 };
 
+const existsById = (req, res) => {
+  const { id } = req.params;
+
+  Moveset.findOne({_id:id}).then(doc=>{
+    const isOK = doc ? true : false;
+    res.json({isOK});
+  })
+  .catch(err=>{
+    res.status(502).json({isOK:false});
+  })
+};
+
+const load = (req, res) => {
+  const { id, pokemon } = req.params;
+
+  //first find moveset
+  Moveset.findOne({_id:id}).then(doc=>{
+    return doc;
+  })
+  //then find pokemon info
+  .then(ms=>{
+    axios.get(`https://pokeapi.co/api/v2/pokemon/${pokemon}/`)
+    .then(resp=>{
+      return {ms, pokemon:resp.data};
+    })
+    //then find species info
+    .then(({ms,pokemon})=>{
+      axios.get(pokemon.species.url)
+      .then(resp=>{
+        res.json({moveset:ms, pokemon, species:resp.data});
+      });
+    });
+  })
+  .catch(err=>{
+    res.status(502).json({isOK:false});
+  })
+};
+
 module.exports={
   exists,
   existsEmpty,
   add,
   loadUsersList,
-  loadList
+  loadList,
+  existsById,
+  load
 };
