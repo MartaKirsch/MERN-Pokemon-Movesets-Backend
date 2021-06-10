@@ -2,20 +2,28 @@ const session = require('express-session');
 const axios = require('axios');
 const Moveset = require('../models/movesetModel');
 
+//if moveset name is not taken
 const exists = (req, res) => {
-  const { name, pokemon } = req.params;
+  const { name, pokemon, id } = req.body;
 
-  Moveset.findOne({name_lowercase:name.toLowerCase(), pokemon}).then(doc=>{
-    const isOK = doc ? false : true;
-    res.json({isOK});
-  })
-  .catch(err=>{
-    res.status(502).json({isOK:false});
-  })
-};
+  if(!name || !pokemon || name=="" || pokemon =="")
+    res.json({isOK:true});
 
-const existsEmpty = (req, res) => {
-  res.json({isOK:true});
+  else
+  {
+    Moveset.findOne({name_lowercase:name.toLowerCase(), pokemon}).then(doc=>{
+      let isOK = false;
+      if(id && id!=="")
+        isOK = (doc && doc._id==id);
+      else
+        isOK = doc ? false : true;
+      res.json({isOK});
+    })
+    .catch(err=>{
+      res.status(502).json({isOK:false});
+    })
+  }
+
 };
 
 const add = (req, res) => {
@@ -136,13 +144,67 @@ const deleteOne = (req, res) => {
   })
 };
 
+const checkForUpdate = (req, res) => {
+  const { user } = req.session;
+  const { id } = req.params;
+
+  if(!user || user==="")
+    res.json({isOK:false});
+  else
+  {
+    Moveset.findOne({_id:id}).then(doc=>{
+      const isOK = doc && doc.author===user ? true : false;
+      res.json({isOK, additional:doc});
+    })
+    .catch(err=>{
+      res.status(502).json({isOK:false});
+    })
+  }
+};
+
+const update = (req, res) => {
+  const { pokemon, name, ability, evs, moves, nature, description, heldItem } = req.body;
+  const { id } = req.params;
+
+  axios.get(`https://pokeapi.co/api/v2/pokemon/${pokemon}`).then(resp=>{
+    const url = resp.data.sprites.front_default;
+    const data = {
+      pokemon,
+      ability,
+      name,
+      name_lowercase : name.toLowerCase(),
+      evs,
+      moves,
+      nature,
+      description,
+      heldItem,
+      url
+    };
+
+    Moveset.findOneAndUpdate({_id:id},data).then(doc=>{
+      const saved = doc ? true : false;
+      res.json({saved});
+    })
+
+  }).catch(err=>{
+    res.status(502).json({saved: false});
+  });
+
+
+
+
+
+
+};
+
 module.exports={
   exists,
-  existsEmpty,
   add,
   loadUsersList,
   loadList,
   existsById,
   load,
-  deleteOne
+  deleteOne,
+  checkForUpdate,
+  update
 };
