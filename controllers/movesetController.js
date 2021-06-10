@@ -12,11 +12,14 @@ const exists = (req, res) => {
   else
   {
     Moveset.findOne({name_lowercase:name.toLowerCase(), pokemon}).then(doc=>{
-      let isOK = false;
-      if(id && id!=="")
-        isOK = (doc && doc._id==id);
+      let isOK = true;
+      if(id && id!="")
+        isOK = (doc!=null && doc._id==id) ? true : false;
       else
-        isOK = doc ? false : true;
+        isOK = doc!=null ? false : true;
+
+      if(doc==null)
+        isOK=true;
       res.json({isOK});
     })
     .catch(err=>{
