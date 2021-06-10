@@ -13,4 +13,6 @@ router.post('/', movesetController.add);
 router.post('/loadUsersList',movesetController.loadUsersList);
 router.post('/loadList',movesetController.loadList);
 
+router.delete('/:id', movesetController.deleteOne);
+
 module.exports = router;

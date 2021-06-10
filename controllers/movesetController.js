@@ -124,6 +124,18 @@ const load = (req, res) => {
   })
 };
 
+const deleteOne = (req, res) => {
+  const { id } = req.params;
+
+  Moveset.findOneAndDelete({_id:id}).then(doc=>{
+    const deleted = doc ? true : false;
+    res.json({deleted});
+  })
+  .catch(err=>{
+    res.status(502).json({deleted:false});
+  })
+};
+
 module.exports={
   exists,
   existsEmpty,
@@ -131,5 +143,6 @@ module.exports={
   loadUsersList,
   loadList,
   existsById,
-  load
+  load,
+  deleteOne
 };
