@@ -78,11 +78,18 @@ const logOut = (req, res) => {
   res.json({mssg:"logged out"});
 };
 
+const getUsername= (req, res) => {
+  let sess = req.session;
+  res.json({additional:sess.user});
+};
+
+
 module.exports = {
   checkIfLoggedIn,
   checkIfExists,
   checkIfEmailExists,
   register,
   logIn,
-  logOut
+  logOut,
+  getUsername
 };
